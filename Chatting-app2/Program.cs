@@ -19,12 +19,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-
-
 app.MapGet("/Messag3", () =>
 {
-
     return messageList ;
 })
 .WithName("GetMessage")
@@ -32,15 +28,14 @@ app.MapGet("/Messag3", () =>
 
 app.MapPost("send-Message",() =>
 {
-
     string message = "new message"; 
     messageList.Add(message); 
-    return "message has been send";
+    return "message has been successfully send";
 });
 
 app.Run();
 
 //internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 //{
-//    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+//public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 //}
