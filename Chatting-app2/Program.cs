@@ -28,7 +28,7 @@ app.MapGet("/Messag3", () =>
 
 app.MapPost("send-Message",() =>
 {
-    string message = "new message"; 
+    string message = "Hi, how r u ? "; 
     messageList.Add(message); 
     return "message has been successfully send";
 });
