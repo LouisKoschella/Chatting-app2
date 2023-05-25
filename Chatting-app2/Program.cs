@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +10,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+List<string> messageList = new List<string>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -15,25 +20,23 @@ if (app.Environment.IsDevelopment())
 }
 
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+
+app.MapGet("/Messag3", () =>
 {
-    //var forecast = Enumerable.Range(1, 5).Select(index =>
-    //    new WeatherForecast
-    //    (
-    //        DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-    //        Random.Shared.Next(-20, 55),
-    //        summaries[Random.Shared.Next(summaries.Length)]
-    //    ))
-    //    .ToArray();
-    return summaries;
+
+    return messageList ;
 })
-.WithName("GetWeatherForecast")
+.WithName("GetMessage")
 .WithOpenApi();
+
+app.MapPost("send-Message",() =>
+{
+
+    string message = "new message"; 
+    messageList.Add(message); 
+    return "message has been send";
+});
 
 app.Run();
 
