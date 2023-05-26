@@ -11,6 +11,9 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 List<string> messageList = new List<string>();
+DateTime currentDateTime = DateTime.Now;
+Console.WriteLine(", Current date and time: " + currentDateTime);
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -31,6 +34,12 @@ app.MapPost("send-Message",() =>
     string message = "Hi, how r u ? "; 
     messageList.Add(message); 
     return "message has been successfully send";
+    
+});
+
+app.MapGet("MessageHistory", () =>
+{
+    return messageList;
 });
 
 app.Run();
