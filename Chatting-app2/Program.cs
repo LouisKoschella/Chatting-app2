@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,16 +23,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/Messag3", () =>
-{
-    return messageList ;
-})
-.WithName("GetMessage")
-.WithOpenApi();
 
-app.MapPost("send-Message",() =>
-{
-    string message = "Hi, how r u ? "; 
+app.MapPost("Message",(string message) =>
+{ 
     messageList.Add(message); 
     return "message has been successfully send";
     
@@ -42,9 +36,11 @@ app.MapGet("MessageHistory", () =>
     return messageList;
 });
 
+app.MapGet("MessageHistory/{messageText}", (string messagetext) =>
+{
+    var fileteredList = messageList.Where(x => x == messagetext);
+    return fileteredList;
+});
+
 app.Run();
 
-//internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-//{
-//public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-//}
