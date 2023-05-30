@@ -1,3 +1,4 @@
+using Chatting_app2;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
@@ -11,10 +12,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-List<string> messageList = new List<string>();
-DateTime currentDateTime = DateTime.Now;
-Console.WriteLine(", Current date and time: " + currentDateTime);
-
+List<Message> messageList = new List<Message>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -24,7 +22,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.MapPost("Message",(string message) =>
+app.MapPost("Message",(Message message) =>
 { 
     messageList.Add(message); 
     return "message has been successfully send";
@@ -36,9 +34,9 @@ app.MapGet("MessageHistory", () =>
     return messageList;
 });
 
-app.MapGet("MessageHistory/{messageText}", (string messagetext) =>
+app.MapGet("MessageHistory/{username}", (string username) =>
 {
-    var fileteredList = messageList.Where(x => x == messagetext);
+    var fileteredList = messageList.Where(x => x.Username == username);
     return fileteredList;
 });
 
