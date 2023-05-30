@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Data;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +11,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+List<string> messageList = new List<string>();
+DateTime currentDateTime = DateTime.Now;
+Console.WriteLine(", Current date and time: " + currentDateTime);
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -15,29 +24,23 @@ if (app.Environment.IsDevelopment())
 }
 
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapPost("Message",(string message) =>
+{ 
+    messageList.Add(message); 
+    return "message has been successfully send";
+    
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("MessageHistory", () =>
 {
-    //var forecast = Enumerable.Range(1, 5).Select(index =>
-    //    new WeatherForecast
-    //    (
-    //        DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-    //        Random.Shared.Next(-20, 55),
-    //        summaries[Random.Shared.Next(summaries.Length)]
-    //    ))
-    //    .ToArray();
-    return summaries;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    return messageList;
+});
+
+app.MapGet("MessageHistory/{messageText}", (string messagetext) =>
+{
+    var fileteredList = messageList.Where(x => x == messagetext);
+    return fileteredList;
+});
 
 app.Run();
 
-//internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-//{
-//    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-//}
