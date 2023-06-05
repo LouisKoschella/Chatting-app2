@@ -1,6 +1,6 @@
 ﻿namespace Chatting_app2
 {
-    public class Message
+    public class MessageDTO
     {
        
         public string Username { get; set; }

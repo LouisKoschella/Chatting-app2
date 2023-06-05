@@ -1,44 +1,76 @@
 using Chatting_app2;
+using Chatting_app2.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Data.SqlClient;
 
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-List<Message> messageList = new List<Message>();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+internal class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    private static void Main(string[] args)
+    {
+        
+
+        var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddDbContext<MessageContext>(options =>
+                options.UseSqlServer(GetConnectionString("defaultConnection")));
+
+        builder.Services.AddDbContext<MessageContext>();
+
+
+        // Add services to the container.
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        var app = builder.Build();
+
+        List<MessageDTO> messageList = new List<MessageDTO>();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.MapPost("Message", (MessageDTO messageDto, MessageContext db) => {
+            var message = new Message
+            {
+                Id = new Guid(),
+                Username = messageDto.Username,
+                MessageText = messageDto.MessageText,
+                MessageTime = messageDto.MessageTime
+            }; 
+            
+            db.Add(message);
+            db.SaveChanges();
+
+
+
+        return "nothung";
+        });
+
+
+        app.MapGet("MessageHistory", () =>
+        {
+            return messageList;
+        });
+
+        app.MapGet("MessageHistory/{username}", (string username) =>
+        {
+            var fileteredList = messageList.Where(x => x.Username == username);
+            return fileteredList;
+        });
+
+
+        app.Run();
+    }
+
+    private static Action<SqlServerDbContextOptionsBuilder>? GetConnectionString(string v)
+    {
+        throw new NotImplementedException();
+    }
 }
-
-
-app.MapPost("Message",(Message message) =>
-{ 
-    messageList.Add(message); 
-    return "message has been successfully send";
-    
-});
-
-app.MapGet("MessageHistory", () =>
-{
-    return messageList;
-});
-
-app.MapGet("MessageHistory/{username}", (string username) =>
-{
-    var fileteredList = messageList.Where(x => x.Username == username);
-    return fileteredList;
-});
-
-app.Run();
-
