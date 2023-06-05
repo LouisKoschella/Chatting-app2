@@ -14,10 +14,15 @@ internal class Program
         
 
         var builder = WebApplication.CreateBuilder(args);
+        
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+        
+        var defaultConnectionString = config.GetConnectionString("defaultConnection");
+        
         builder.Services.AddDbContext<MessageContext>(options =>
-                options.UseSqlServer(GetConnectionString("defaultConnection")));
-
-        builder.Services.AddDbContext<MessageContext>();
+                options.UseSqlServer(defaultConnectionString));
 
 
         // Add services to the container.
@@ -67,10 +72,5 @@ internal class Program
 
 
         app.Run();
-    }
-
-    private static Action<SqlServerDbContextOptionsBuilder>? GetConnectionString(string v)
-    {
-        throw new NotImplementedException();
     }
 }
