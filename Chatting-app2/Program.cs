@@ -11,13 +11,17 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        
+
 
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddDbContext<MessageContext>(options =>
-                options.UseSqlServer(GetConnectionString("defaultConnection")));
+        var config = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .Build();
 
-        builder.Services.AddDbContext<MessageContext>();
+        var defaultConnectionString = config.GetConnectionString("defaultConnection");
+
+        builder.Services.AddDbContext<MessageContext>(options =>
+                options.UseSqlServer(defaultConnectionString));
 
 
         // Add services to the container.
@@ -36,21 +40,22 @@ internal class Program
             app.UseSwaggerUI();
         }
 
-        app.MapPost("Message", (MessageDTO messageDto, MessageContext db) => {
+        app.MapPost("Message", (MessageDTO messageDto, MessageContext db) =>
+        {
             var message = new Message
             {
                 Id = new Guid(),
                 Username = messageDto.Username,
                 MessageText = messageDto.MessageText,
                 MessageTime = messageDto.MessageTime
-            }; 
-            
+            };
+
             db.Add(message);
             db.SaveChanges();
 
 
 
-        return "nothung";
+            return "nothung";
         });
 
 
