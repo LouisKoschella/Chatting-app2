@@ -1,12 +1,14 @@
 using Chatting_app2;
 using Chatting_app2.Entities;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Client;
 using System;
 using System.Data.SqlClient;
-
+using Microsoft.Graph;
 internal class Program
 {
     private static void Main(string[] args)
@@ -53,9 +55,7 @@ internal class Program
             db.Add(message);
             db.SaveChanges();
 
-
-
-            return "nothung";
+            return "nothing";
         });
 
 
@@ -70,7 +70,6 @@ internal class Program
             return fileteredList;
         });
 
-
         app.Run();
     }
 
@@ -78,4 +77,6 @@ internal class Program
     {
         throw new NotImplementedException();
     }
+
+
 }

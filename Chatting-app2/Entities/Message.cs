@@ -8,5 +8,9 @@
         public string MessageText { get; set; }
         public DateTime MessageTime { get; set; }
 
+        internal static Task GetTodo(int v, object context)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
