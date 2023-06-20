@@ -1,9 +1,8 @@
-using Chatting_app2.Test;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Xunit;
 
-namespace Chatting_app2
+namespace Chatting_app2.Test
 {
     public class WhenPostMessage
     {
@@ -11,7 +10,7 @@ namespace Chatting_app2
         public async Task ShouldReturnCorrectResponse()
         {
             // Arrange
-
+            Console.WriteLine("test");
 
             // Act
             await using var application = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>

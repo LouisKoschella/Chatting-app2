@@ -46,8 +46,7 @@ app.MapPost("Message", (MessageDTO messageDto, MessageContext db) =>
     return message;
 });
 
-
-app.MapGet("MessageHistory", () => { return messageList; });
+app.MapGet("MessageHistory", (MessageContext db) => { return db.Message.ToList(); });
 
 app.MapGet("MessageHistory/{username}", (string username) =>
 {
@@ -55,4 +54,10 @@ app.MapGet("MessageHistory/{username}", (string username) =>
     return fileteredList;
 });
 
+    static IHostBuilder CreateHostBuilder(string[] args) =>
+           Host.CreateDefaultBuilder(args)
+               .ConfigureWebHostDefaults(webBuilder =>
+               {
+                   webBuilder.UseStartup<Startup>();
+               });
 app.Run();

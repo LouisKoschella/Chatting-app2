@@ -9,7 +9,6 @@ namespace Chatting_app2
     {
         public MessageContext(DbContextOptions options) : base(options)
         {
-
         }
         public DbSet<Entities.Message> Message { get; set; }
     }
