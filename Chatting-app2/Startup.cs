@@ -1,9 +1,5 @@
-﻿using Chatting_app2;
-using FluentAssertions.Common;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Chatting_app2.MessageHub;
+
 namespace Chatting_app2
 {
     public class Startup
@@ -25,11 +21,7 @@ namespace Chatting_app2
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<ChatHub>("/chat");
-            });
-
+            app.UseEndpoints(endpoints => { endpoints.MapHub<ChatHub>("/chat"); });
         }
     }
 }

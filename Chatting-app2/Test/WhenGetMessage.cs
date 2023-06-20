@@ -1,5 +1,5 @@
-﻿using Chatting_app2.Entities;
-using com.sun.xml.@internal.ws.api.message;
+﻿using Chatting_app2.DataModels;
+using Chatting_app2.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Xunit;
@@ -8,50 +8,48 @@ namespace Chatting_app2.Test
 {
     public class WhenGetMessage
     {
-
         [Fact]
         public async Task ShouldReturnCorrectResponse()
         {
             // Arrange
-        
-
-            // Act
-            await using var application = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
+            var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
             {
                 builder.ConfigureTestServices(services =>
                 {
-                    services.AddSingleton(async _ =>
+                    services.AddSingleton(_ =>
                     {
                         var dbContext = new MockedDb().CreateDbContext();
-                        var messages = new List<Entities.Message>()
+
+                        // Add test data
+                        var messages = new List<Message>()
                         {
-                            new Entities.Message
+                            new()
                             {
                                 Id = Guid.NewGuid(),
                                 MessageText = "test",
-                                MessageTime = DateTime.Now
+                                MessageTime = DateTime.Now,
+                                Username = "username"
                             },
-
-                            new Entities.Message
+                            new()
                             {
                                 Id = Guid.NewGuid(),
                                 MessageText = "testv2",
                                 MessageTime = DateTime.Now,
+                                Username = "usernamev2"
                             }
-                    };
+                        };
 
-                        dbContext.Set<Messages>().AddRange((IEnumerable<Messages>)messages);
-                        await dbContext.SaveChangesAsync();
+                        dbContext.Set<Message>().AddRange(messages);
+                        dbContext.SaveChanges();
 
                         return dbContext;
                     });
-
-                    services.BuildServiceProvider();
                 });
             });
-            
 
-            using var client = application.CreateClient();
+
+            // Act
+            var client = factory.CreateClient();
             var result = await client.GetAsync("/MessageHistory");
             var content = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
 
@@ -61,4 +59,3 @@ namespace Chatting_app2.Test
         }
     }
 }
-

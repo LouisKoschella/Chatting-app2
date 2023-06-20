@@ -1,3 +1,4 @@
+using Chatting_app2.DataModels;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Xunit;
@@ -10,9 +11,6 @@ namespace Chatting_app2.Test
         public async Task ShouldReturnCorrectResponse()
         {
             // Arrange
-            Console.WriteLine("test");
-
-            // Act
             await using var application = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
             {
                 builder.ConfigureTestServices(services =>
@@ -26,8 +24,8 @@ namespace Chatting_app2.Test
                     services.BuildServiceProvider();
                 });
             });
-            ;
 
+            //Act
             using var client = application.CreateClient();
             var result = await client.PostAsJsonAsync("/Message", new MessageDTO
             {

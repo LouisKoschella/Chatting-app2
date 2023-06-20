@@ -1,4 +1,5 @@
 using Chatting_app2;
+using Chatting_app2.DataModels;
 using Chatting_app2.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,7 +47,15 @@ app.MapPost("Message", (MessageDTO messageDto, MessageContext db) =>
     return message;
 });
 
-app.MapGet("MessageHistory", (MessageContext db) => { return db.Message.ToList(); });
+app.MapGet("MessageHistory", (MessageContext db) =>
+{
+    return db.Message.Select(x => new MessageDTO()
+    {
+        MessageText = x.MessageText,
+        MessageTime = x.MessageTime,
+        Username = x.Username
+    }).ToList();
+});
 
 app.MapGet("MessageHistory/{username}", (string username) =>
 {
@@ -54,10 +63,4 @@ app.MapGet("MessageHistory/{username}", (string username) =>
     return fileteredList;
 });
 
-    static IHostBuilder CreateHostBuilder(string[] args) =>
-           Host.CreateDefaultBuilder(args)
-               .ConfigureWebHostDefaults(webBuilder =>
-               {
-                   webBuilder.UseStartup<Startup>();
-               });
 app.Run();
