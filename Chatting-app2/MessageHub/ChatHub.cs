@@ -7,7 +7,7 @@ namespace Chatting_app2.MessageHub
         public async Task Send(string name, string message)
         {
             // Call the broadcastMessage method to update clients.
-            await Clients.All.SendAsync("broadcastMessage", name, message);
+            await Clients.All.SendAsync("ReceiveOne", name, message);
             //others also can be used  
         }
     }

@@ -1,6 +1,9 @@
 using Chatting_app2;
 using Chatting_app2.DataModels;
 using Chatting_app2.Entities;
+using Chatting_app2.MessageHub;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -15,14 +18,13 @@ builder.Services.AddDbContext<MessageContext>(options =>
     options.UseSqlServer(defaultConnectionString));
 
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
+builder.Services.AddSignalR();
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
-
-List<MessageDTO> messageList = new List<MessageDTO>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -31,7 +33,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("Message", (MessageDTO messageDto, MessageContext db) =>
+app.UseCors(builder =>
+    builder.WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapHub<ChatHub>("/chatsocket");
+});
+
+app.MapPost("api/send", (MessageDTO messageDto, MessageContext db, [FromServices]IHubContext<ChatHub> hubContext) =>
 {
     var message = new Message
     {
@@ -43,11 +60,13 @@ app.MapPost("Message", (MessageDTO messageDto, MessageContext db) =>
 
     db.Add(message);
     db.SaveChanges();
+    
+    hubContext.Clients.All.SendAsync("ReceiveOne", messageDto.Username, messageDto.MessageText, messageDto.MessageTime);
 
     return message;
 });
 
-app.MapGet("MessageHistory", (MessageContext db) =>
+app.MapGet("api/messageHistory", (MessageContext db) =>
 {
     return db.Message.Select(x => new MessageDTO()
     {
@@ -57,10 +76,14 @@ app.MapGet("MessageHistory", (MessageContext db) =>
     }).ToList();
 });
 
-app.MapGet("MessageHistory/{username}", (string username) =>
+app.MapGet("api/messageHistory/{username}", (string username, MessageContext db) =>
 {
-    var fileteredList = messageList.Where(x => x.Username == username);
-    return fileteredList;
+    return db.Message.Select(x => new MessageDTO()
+    {
+        MessageText = x.MessageText,
+        MessageTime = x.MessageTime,
+        Username = x.Username
+    }).Where(x=> x.Username == username).ToList();
 });
 
 app.Run();
