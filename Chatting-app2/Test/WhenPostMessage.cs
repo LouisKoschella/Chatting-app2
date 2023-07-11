@@ -27,7 +27,7 @@ namespace Chatting_app2.Test
 
             //Act
             using var client = application.CreateClient();
-            var result = await client.PostAsJsonAsync("/Message", new MessageDTO
+            var result = await client.PostAsJsonAsync("api/send", new MessageDTO
             {
                 MessageText = "test",
                 Username = "testusernmae",

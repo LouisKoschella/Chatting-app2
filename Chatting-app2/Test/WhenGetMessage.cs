@@ -50,7 +50,7 @@ namespace Chatting_app2.Test
 
             // Act
             var client = factory.CreateClient();
-            var result = await client.GetAsync("/MessageHistory");
+            var result = await client.GetAsync("/api/messageHistory");
             var content = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
 
             //Assert
