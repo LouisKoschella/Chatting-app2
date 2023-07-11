@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Chatting_app2.Test
 {
-    public class WhenGetMessage
+    public class WhenGetMessages
     {
         [Fact]
         public async Task ShouldReturnCorrectResponse()
@@ -55,7 +55,9 @@ namespace Chatting_app2.Test
 
             //Assert
             Assert.NotNull(content);
+            Assert.Equal(2, content?.Count);
             Assert.Equal("test", content?.First().MessageText);
+            Assert.Equal("testv2", content?.Last().MessageText);
         }
     }
 }

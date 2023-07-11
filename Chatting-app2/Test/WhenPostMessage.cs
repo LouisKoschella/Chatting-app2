@@ -30,7 +30,7 @@ namespace Chatting_app2.Test
             var result = await client.PostAsJsonAsync("api/send", new MessageDTO
             {
                 MessageText = "test",
-                Username = "testusernmae",
+                Username = "testusername",
                 MessageTime = DateTime.Now
             });
             var content = await result.Content.ReadFromJsonAsync<MessageDTO>();
